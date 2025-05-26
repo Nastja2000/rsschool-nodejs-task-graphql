@@ -9,9 +9,20 @@ export const ProfileType = new GraphQLObjectType({
 		id: {type: new GraphQLNonNull(UUIDType)},
 		isMale: {type: new GraphQLNonNull(GraphQLBoolean)},
 		yearOfBirth: {type: new GraphQLNonNull(GraphQLInt)},
-		user: {type: new GraphQLNonNull(UserType)},
+		user: {
+			type: new GraphQLNonNull(UserType),
+			resolve: (profile, _, context) => {
+				return context.prisma.user.findUnique({
+					where: {id: profile.userId}
+				})
+			}},
 		userId: {type: new GraphQLNonNull(GraphQLString)},
-		memberType: {type: new GraphQLList(MemberType)},
+		memberType: {type: new GraphQLList(MemberType),
+			resolve: (profile, _, context) => {
+				return context.prisma.member.findUnique({
+					where: {id: profile.memberTypeId}
+				})
+			}},
 		memberTypeId: {type: new GraphQLNonNull(GraphQLString)}
 	}),
 });

@@ -8,6 +8,12 @@ export const MemberType = new GraphQLObjectType({
 		id: {type: new GraphQLNonNull(UUIDType)},
 		discount: {type: new GraphQLNonNull(GraphQLFloat)},
 		postsLimitPerMonth: {type: new GraphQLNonNull(GraphQLInt)},
-		profiles: {type: new GraphQLList(ProfileType)}
+		profiles: {
+			type: new GraphQLList(ProfileType),
+			resolve: (member, _, context) => {
+				return context.prisma.profile.findMany({
+					where: {memberTypeId: member.id}
+				})
+			}}
 	}),
 });

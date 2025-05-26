@@ -9,7 +9,13 @@ export const PostType = new GraphQLObjectType({
 		id: {type: new GraphQLNonNull(UUIDType)},
 		title: {type: new GraphQLNonNull(GraphQLString)},
 		content: {type: new GraphQLNonNull(GraphQLString)},
-		author: {type: new GraphQLList(UserType)},
+		author: {
+			type: new GraphQLList(UserType),
+			resolve: (post, _, context) => {
+				return context.prisma.user.findMany({
+					where: {id: post.authorId}
+				})
+			}},
 		authorId: {type: new GraphQLNonNull(GraphQLString)}
 	}),
 })
